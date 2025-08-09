@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import styles from './Carousel.module.css';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { carouselService } from '../../service/carouselService';
 
 interface ICarouselItem {
   subtitle: string;
@@ -18,20 +18,20 @@ function Carousel() {
 
   useEffect(() => {
     async function fetchItems() {
-      try {
-        const newItems = await axios.get<ICarouselItem[]>('http://localhost:3001/carousel');
-        setItems(newItems.data);
-      } catch (error) {
-        console.error('Erro ao buscar os itens do carrossel:', error);
-      }
+      const newItems = await carouselService.getCarouselItems();
+      setItems(newItems);
     }
 
     fetchItems();
   }, []);
 
   useEffect(() => {
+    console.log('iniciou o timer do carrousel');
     const timer = setInterval(() => nextItem(), 3000);
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(timer);
+      console.log('limpou o timer do carrousel');
+    };
   }, [items]);
 
   function previousItem() {

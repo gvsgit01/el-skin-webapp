@@ -1,27 +1,47 @@
-import React, { useState } from 'react';
-import './Header.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartShopping, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState } from 'react';
+import CartModal from '../CartModal/CartModal';
+import './Header.css';
+// import { useCartContext } from '../../context/CartContext';
+import styled from 'styled-components';
+import { useSearch } from '../../hooks/useSearch';
+
+const Logo = styled.div`
+  font-size: ${({ theme }) => theme.fontSize.base};
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
+  color: ${({ theme }) => theme.colors.text.primary};
+  margin: 0;
+  letter-spacing: 0.5px;
+`;
 
 function Header() {
-  const [textoBusca, setTextoBusca] = useState('');
-
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+  const {term, setTerm} = useSearch();
+  
+  const handleCloseCart = () => {
+    setIsCartModalOpen(false);
+  };
 
   function handleOnChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setTextoBusca(e.target.value);
+    setTerm(e.target.value);
   }
 
   function onClickSearch(): void {
-    console.log(`Você pesquisou por: ${textoBusca}`);
+    console.log(`Você pesquisou por: ${term}`);
+  }
+
+  function handleOnClickCart() {
+    setIsCartModalOpen(true);
   }
 
   return (
     <header className="header">
       <div className="header-top">
         <div className="container">
-          <div className="logo">
-            <span>AL SKIN</span>
-          </div>
+          <Logo>
+            AL SKIN
+          </Logo>
 
           <div className="search-bar">
             <input 
@@ -35,7 +55,7 @@ function Header() {
           </div>
 
           <div className="header-actions">
-            <button className="cart-button">
+            <button className="cart-button" onClick={handleOnClickCart}>
               <FontAwesomeIcon icon={faCartShopping} />
             </button>
           </div>
@@ -44,6 +64,11 @@ function Header() {
 
       <nav className="header-nav">
       </nav>
+
+      <CartModal
+        isOpen={isCartModalOpen}
+        onClose={handleCloseCart}
+      />
       
     </header>
   );

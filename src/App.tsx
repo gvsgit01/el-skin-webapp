@@ -1,10 +1,19 @@
-import React from 'react';
-import './App.css';
+import { Provider } from 'react-redux';
+import { ThemeProvider } from 'styled-components';
+// import { CartProvider } from './context/CartContext';
 import AppRouter from './routes';
+import { store } from './store';
+import { GlobalStyles } from './styles/GlobalStyles';
+import { theme } from './styles/theme';
 
 function App() {
   return (
-    <AppRouter />
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <GlobalStyles />
+        <AppRouter />
+      </ThemeProvider>
+    </Provider>
   );
 }
 

@@ -1,23 +1,21 @@
 import React from 'react';
 import './ProductCard.css';
-
-export interface IProduct {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  tags: Array<{
-    label: string;
-    type: 'protection' | 'face';
-  }>;
-}
+import { IProduct } from '../../service/productService';
+import styled from 'styled-components';
 
 interface ProductCardProps {
   product: IProduct;
   onProductClick: (productId: string) => void;
   onBuyClick: (productId: string, event: React.MouseEvent) => void;
 }
+
+/* </span>
+              <span 
+    key={`${product.id}-${tag.label || idx}-${tag.type || idx}`}
+    className={`product-tag product-tag--${tag.type}`}
+  >
+    {tag.label}
+  </span> */
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
@@ -29,8 +27,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   return (
-    <a
-      className="product-card"
+    <StyledProductCard
+      data-testid="product-card" 
       onClick={() => onProductClick(product.id)}>
       <div className="product-image">
         <img 
@@ -44,13 +42,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <p className="product-description">{product.description}</p>
         
         <div className="product-tags">
-          {product.tags.map((tag) => (
-            <span 
-              key={`${product.id}-${tag.label}-${tag.type}`}
-              className={`product-tag product-tag--${tag.type}`}
+          {product.tags?.map((tag, idx) => (
+            <ProductTag
+              tagtype={tag.type}
+              key={`${product.id}-${tag.label || idx}-${tag.type || idx}`}
             >
               {tag.label}
-            </span>
+            </ProductTag>
           ))}
         </div>
         
@@ -58,7 +56,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <span className="product-price">
             {formatPrice(product.price)}
           </span>
-          <button 
+          <button
+            data-testid="buy-button"
             className="product-buy-button"
             onClick={(e) => onBuyClick(product.id, e)}
             type="button"
@@ -67,8 +66,44 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </button>
         </div>
       </div>
-    </a>
+    </StyledProductCard>
   );
 };
+
+const StyledProductCard = styled.a`
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  width: 100%;
+  max-width: 300px;
+  border: 1px solid black;
+  padding: 0;
+  text-align: left;
+  font-family: inherit;
+  text-decoration: none;
+  display: block;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+
+  &:focus {
+    outline-offset: 2px;
+  }
+`;
+
+const ProductTag = styled.span<{ tagtype: 'protection' | 'face' }>`
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: ${({ tagtype }) => 
+    tagtype === 'protection' ? '#E3F2FD' : '#FCE4EC'};
+  color: ${({ tagtype }) => 
+    tagtype === 'protection' ? '#1976D2' : '#C2185B'};
+`;
 
 export default ProductCard;
